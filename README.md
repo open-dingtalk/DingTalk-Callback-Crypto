@@ -24,7 +24,13 @@
 ```java
             // 1. 从http请求中获取加解密参数
             String msg_signature = request.getParameter("msg_signature");
+            if (msg_signature == null) {
+                msg_signature = request.getParameter("signature");
+            }
             String timeStamp = request.getParameter("timeStamp");
+            if (timeStamp == null) {
+                timeStamp = request.getParameter("timestamp");
+            }
             String nonce = request.getParameter("nonce");
             String encrypt = bodyJson.getString("encrypt");
 
