@@ -1,3 +1,5 @@
+package com.dingtalk.open;
+
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
@@ -10,15 +12,15 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.commons.codec.binary.Base64;
+import com.alibaba.fastjson.JSON;
 
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * 钉钉开放平台加解密方法
  * 在ORACLE官方网站下载JCE无限制权限策略文件
- *     JDK6的下载地址：http://www.oracle.com/technetwork/java/javase/downloads/jce-6-download-429243.html
- *     JDK7的下载地址： http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html
- * 依赖common-codes包
+ * JDK6的下载地址：http://www.oracle.com/technetwork/java/javase/downloads/jce-6-download-429243.html
+ * JDK7的下载地址： http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html
  */
 public class DingCallbackCrypto {
 
@@ -54,7 +56,7 @@ public class DingCallbackCrypto {
     }
 
     public Map<String, String> getEncryptedMap(String plaintext) throws DingTalkEncryptException {
-        return getEncryptedMap(plaintext, System.currentTimeMillis(), Utils.getRandomStr(20));
+        return getEncryptedMap(plaintext, System.currentTimeMillis(), Utils.getRandomStr(16));
     }
 
     /**
@@ -74,11 +76,11 @@ public class DingCallbackCrypto {
         if (null == timeStamp) {
             throw new DingTalkEncryptException(DingTalkEncryptException.ENCRYPTION_TIMESTAMP_ILLEGAL);
         }
-        if (null == nonce) {
+        if (null == nonce || nonce.length() != 16) {
             throw new DingTalkEncryptException(DingTalkEncryptException.ENCRYPTION_NONCE_ILLEGAL);
         }
         // 加密
-        String encrypt = encrypt(Utils.getRandomStr(RANDOM_LENGTH), plaintext);
+        String encrypt = encrypt(nonce, plaintext);
         String signature = getSignature(token, String.valueOf(timeStamp), nonce, encrypt);
         Map<String, String> resultMap = new HashMap<String, String>();
         resultMap.put("msg_signature", signature);
@@ -199,11 +201,13 @@ public class DingCallbackCrypto {
         try {
             String[] array = new String[] {token, timestamp, nonce, encrypt};
             Arrays.sort(array);
+            System.out.println(JSON.toJSONString(array));
             StringBuffer sb = new StringBuffer();
             for (int i = 0; i < 4; i++) {
                 sb.append(array[i]);
             }
             String str = sb.toString();
+            System.out.println(str);
             MessageDigest md = MessageDigest.getInstance("SHA-1");
             md.update(str.getBytes());
             byte[] digest = md.digest();
