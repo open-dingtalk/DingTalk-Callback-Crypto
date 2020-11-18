@@ -69,4 +69,6 @@ String decryptMsg = callbackCrypto.getDecryptMsg(msg_signature, timeStamp, nonce
 
 ### c#版本 DingTalkEncryptor.cs
 
-### Golang版本  [https://github.com/icepy/go-dingtalk/blob/master/src/crypto.go](https://github.com/icepy/go-dingtalk/blob/master/src/crypto.go)
+### Golang版本 参考[https://github.com/icepy/go-dingtalk/blob/master/src/crypto.go](https://github.com/icepy/go-dingtalk/blob/master/src/crypto.go)
+
+### Nodejs版本 参考[https://github.com/elixirChain/dingtalk-encrypt](https://github.com/elixirChain/dingtalk-encrypt)
