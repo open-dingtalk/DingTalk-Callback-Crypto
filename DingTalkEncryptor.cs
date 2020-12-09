@@ -4,7 +4,6 @@ using System.Security.Cryptography;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Dingtalk
 {
@@ -46,7 +45,7 @@ namespace Dingtalk
          */
         public Dictionary<String, String> getEncryptedMap(String plaintext)
         {
-            
+
             var time = DateTime.Now.Millisecond;
             return getEncryptedMap(plaintext, time);
         }
@@ -70,7 +69,7 @@ namespace Dingtalk
             {
                 throw new DingTalkEncryptException(DingTalkEncryptException.ENCRYPTION_NONCE_ILLEGAL);
             }
-           
+
             String encrypt = this.encrypt(nonce, plaintext);
             String signature = getSignature(token, timeStamp.ToString(), nonce, encrypt);
             Dictionary<String, String> resultMap = new Dictionary<String, String>();
@@ -467,4 +466,27 @@ namespace Dingtalk
             return String.Compare(x,y);
         }
     }
+
+
+    // 测试加解密的正确性
+    public class Program
+        {
+            public static void Main(string[] args)
+            {
+
+                String[] a = new String[] { "1", "W", "t" };
+
+                var ding = new DingTalkEncryptor("tokenxxxx", "o1w0aum42yaptlz8alnhwikjd3jenzt9cb9wmzptgus", "dingxxxxxx");
+                var msg = ding.getEncryptedMap("success");
+                Console.Out.WriteLine(msg);
+                //msg_signature, $data->timeStamp, $data->nonce, $data->encrypt
+                var text = ding.getDecryptMsg(msg["msg_signature"], msg["timeStamp"], msg["nonce"], msg["encrypt"]);
+                Console.Out.WriteLine(text);
+                // "msg_signature":"c01beb7b06384cf416e04930aed794684aae98c1","encrypt":"","timeStamp":,"nonce":""
+                //{"timeStamp":"1605695694141","msg_signature":"702c953056613f5c7568b79ed134a27bd2dcd8d0",
+                //"encrypt":"","nonce":"WelUQl6bCqcBa2fMc6eI"}
+                text = ding.getDecryptMsg("f36f4ba5337d426c7d4bca0dbcb06b3ddc1388fc", "1605695694141", "WelUQl6bCqcBa2fM", "X1VSe9cTJUMZu60d3kyLYTrBq5578ZRJtteU94wG0Q4Uk6E/wQYeJRIC0/UFW5Wkya1Ihz9oXAdLlyC9TRaqsQ==");
+                Console.Out.WriteLine(text);
+            }
+        }
 }

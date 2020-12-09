@@ -1,4 +1,4 @@
-package dingtalk
+package main
 
 import (
 	"bytes"
@@ -8,9 +8,11 @@ import (
 	"encoding/base64"
 	"encoding/binary"
 	"errors"
+	"fmt"
 	r "math/rand"
 	"sort"
 	"strings"
+	"crypto/sha1"
 	"time"
 )
 
@@ -23,7 +25,8 @@ type DingTalkCrypto struct {
 }
 
 func NewDingTalkCrypto(token, encodingAESKey, suiteKey string) *DingTalkCrypto {
-	if len(encodingAESKey) != aesEncodeKeyLen {
+	fmt.Println(len(encodingAESKey))
+	if len(encodingAESKey) != int(43) {
 		panic("不合法的EncodingAESKey")
 	}
 	bkey, err := base64.StdEncoding.DecodeString(encodingAESKey + "=")
@@ -68,7 +71,14 @@ func (c *DingTalkCrypto) GetDecryptMsg(signature, timestamp, nonce, secretMsg st
 	return string(plantText[:size]), nil
 }
 
-func (c *DingTalkCrypto) GetEncryptMsg(msg, timestamp, nonce string) (string, string, error) {
+func (c *DingTalkCrypto) GetEncryptMsg(msg string) (map[string]string, error) {
+	var timestamp = time.Now().Second();
+	var nonce = randomString(12);
+	str, sign, err := c.GetEncryptMsgDetail(msg, fmt.Sprint(timestamp), nonce)
+
+	return map[string]string{"nonce": nonce, "timeStamp": fmt.Sprint(timestamp), "encrypt": str, "msg_signature": sign}, err;
+}
+func (c *DingTalkCrypto) GetEncryptMsgDetail(msg, timestamp, nonce string) (string, string, error) {
 	size := make([]byte, 4)
 	binary.BigEndian.PutUint32(size, uint32(len(msg)))
 	msg = randomString(16) + string(size) + msg + c.SuiteKey
@@ -82,6 +92,27 @@ func (c *DingTalkCrypto) GetEncryptMsg(msg, timestamp, nonce string) (string, st
 	outMsg := base64.StdEncoding.EncodeToString(chipherText)
 	signature := c.CreateSignature(c.Token, timestamp, nonce, string(outMsg))
 	return string(outMsg), signature, nil
+}
+
+func sha1Sign(s string) string {
+	// The pattern for generating a hash is `sha1.New()`,
+	// `sha1.Write(bytes)`, then `sha1.Sum([]byte{})`.
+	// Here we start with a new hash.
+	h := sha1.New()
+
+	// `Write` expects bytes. If you have a string `s`,
+	// use `[]byte(s)` to coerce it to bytes.
+	h.Write([]byte(s))
+
+	// This gets the finalized hash result as a byte
+	// slice. The argument to `Sum` can be used to append
+	// to an existing byte slice: it usually isn't needed.
+	bs := h.Sum(nil)
+
+	// SHA1 values are often printed in hex, for example
+	// in git commits. Use the `%x` format verb to convert
+	// a hash results to a hex string.
+	return fmt.Sprintf("%x", bs)
 }
 
 // 数据签名
@@ -139,4 +170,13 @@ func randomString(n int, alphabets ...byte) string {
 		}
 	}
 	return string(bytes)
+}
+
+func main() {
+
+	var ding = NewDingTalkCrypto("tokenxxxx", "o1w0aum42yaptlz8alnhwikjd3jenzt9cb9wmzptgus", "dingxxxxxx");
+	msg, _ := ding.GetEncryptMsg("success");
+	fmt.Println(msg);
+	success, _ := ding.GetDecryptMsg("f36f4ba5337d426c7d4bca0dbcb06b3ddc1388fc", "1605695694141", "WelUQl6bCqcBa2fM", "X1VSe9cTJUMZu60d3kyLYTrBq5578ZRJtteU94wG0Q4Uk6E/wQYeJRIC0/UFW5Wkya1Ihz9oXAdLlyC9TRaqsQ==");
+	fmt.Println(success)
 }
