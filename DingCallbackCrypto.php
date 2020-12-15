@@ -216,7 +216,7 @@ class Prpcrypt
 
             
 
-            $encrypted = openssl_encrypt($text, 'AES-256-CBC', $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, $iv );
+            $encrypted = openssl_encrypt($text, 'AES-256-CBC', $this->key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, $iv );
 
 			//print(base64_encode($encrypted));
 			//使用BASE64对加密后的字符串进行编码
@@ -240,7 +240,7 @@ class Prpcrypt
 			// mcrypt_generic_deinit($module);
             // mcrypt_module_close($module);
             
-            $decrypted = openssl_decrypt ( $ciphertext_dec, 'AES-256-CBC', $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, $iv );
+            $decrypted = openssl_decrypt ( $ciphertext_dec, 'AES-256-CBC', $this->key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, $iv );
 
         
            // return $decrypted;
