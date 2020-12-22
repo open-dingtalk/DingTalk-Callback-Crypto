@@ -76,7 +76,7 @@ public class DingCallbackCrypto {
         if (null == timeStamp) {
             throw new DingTalkEncryptException(DingTalkEncryptException.ENCRYPTION_TIMESTAMP_ILLEGAL);
         }
-        if (null == nonce || nonce.length() != 16) {
+        if (null == nonce || nonce.length() < 3) {
             throw new DingTalkEncryptException(DingTalkEncryptException.ENCRYPTION_NONCE_ILLEGAL);
         }
         // 加密
