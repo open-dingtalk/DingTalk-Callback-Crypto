@@ -35,7 +35,7 @@ class DingCallbackCrypto3:
     ## 生成回调处理完成后的success加密数据
     def getEncryptedMap(self, content):
         encryptContent = self.encrypt(content)
-        timeStamp = str(time.time())
+        timeStamp = str(int(time.time()))
         nonce = self.generateRandomKey(16)
         sign = self.generateSignature(nonce, timeStamp, self.token,encryptContent)
         return {'msg_signature':sign,'encrypt':encryptContent,'timeStamp':timeStamp,'nonce':nonce}
@@ -48,10 +48,11 @@ class DingCallbackCrypto3:
         :return:
         """
         sign = self.generateSignature(nonce, timeStamp, self.token,content)
+        print(sign, msg_signature)
         if msg_signature != sign:
             raise ValueError('signature check error')
 
-        content = base64.decodebytes(content)  ##钉钉返回的消息体
+        content = base64.decodebytes(content.encode('UTF-8'))  ##钉钉返回的消息体
 
         iv = self.aesKey[:16]  ##初始向量
         aesDecode = AES.new(self.aesKey, AES.MODE_CBC, iv)
@@ -64,7 +65,7 @@ class DingCallbackCrypto3:
         l = struct.unpack('!i', decodeRes[16:20])[0]
         ##获取去除初始向量，四位msg长度以及尾部corpid
         nl = len(decodeRes)
-    
+
         if decodeRes[(20+l):].decode() != self.key:
             raise ValueError('corpId 校验错误')
         return decodeRes[20:(20+l)].decode()
@@ -81,14 +82,13 @@ class DingCallbackCrypto3:
         iv = self.aesKey[:16]
         aesEncode = AES.new(self.aesKey, AES.MODE_CBC, iv)
         aesEncrypt = aesEncode.encrypt(contentEncode)
-        return base64.encodebytes(aesEncrypt)
-
-    
-        
+        return base64.encodebytes(aesEncrypt).decode('UTF-8')
 
     ### 生成回调返回使用的签名值
     def generateSignature(self, nonce, timestamp, token, msg_encrypt):
-        signList = ''.join(sorted([nonce, timestamp, token, msg_encrypt.decode()]))
+        print(type(nonce), type(timestamp), type(token), type(msg_encrypt))
+        v = msg_encrypt
+        signList = ''.join(sorted([nonce, timestamp, token, v]))
         return hashlib.sha1(signList.encode()).hexdigest()
 
 
@@ -142,5 +142,14 @@ if __name__ == '__main__':
     dingCrypto = DingCallbackCrypto3("xxxx", "o1w0aum42yaptlz8alnhwikjd3jenzt9cb9wmzptgus", "suiteKeyxx")
     t = dingCrypto.getEncryptedMap("{xx:11}")
     print(t)
+    print(t['encrypt'])
     s = dingCrypto.getDecryptMsg(t['msg_signature'],t['timeStamp'],t['nonce'],t['encrypt'])
     print("result:",s)
+
+    test = DingCallbackCrypto3("mryue", "Yue0EfdN5900c1ce5cf6A152c63DDe1808a60c5ecd7", "ding6ccabc44d2c8d38b");
+
+    res = test.getEncryptedMap('{"EventType":"check_url"}');
+    print(res);
+    text = test.getDecryptMsg("03044561471240d4a14bb09372dfcfd4fd0e40cb", "1608001896814", "WL4PK6yA",
+                              '0vJiX6vliEpwG3U45CtXqi+m8PXbQRARJ8p8BbDuD1EMTDf0jKpQ79QS93qEk7XHpP6u+oTTrd15NRPvNvmBKyDCYxxOK+HZeKju4yhELOFchzNukR+t8SB/qk4ROMu3');
+    print(text);
