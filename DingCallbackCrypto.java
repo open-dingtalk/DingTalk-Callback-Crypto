@@ -76,11 +76,11 @@ public class DingCallbackCrypto {
         if (null == timeStamp) {
             throw new DingTalkEncryptException(DingTalkEncryptException.ENCRYPTION_TIMESTAMP_ILLEGAL);
         }
-        if (null == nonce || nonce.length() < 3) {
+        if (null == nonce || nonce.length() != 16) {
             throw new DingTalkEncryptException(DingTalkEncryptException.ENCRYPTION_NONCE_ILLEGAL);
         }
         // 加密
-        String encrypt = encrypt(nonce, plaintext);
+        String encrypt = encrypt(Utils.getRandomStr(RANDOM_LENGTH), plaintext);
         String signature = getSignature(token, String.valueOf(timeStamp), nonce, encrypt);
         Map<String, String> resultMap = new HashMap<String, String>();
         resultMap.put("msg_signature", signature);
