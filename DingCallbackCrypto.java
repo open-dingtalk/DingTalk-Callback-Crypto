@@ -43,7 +43,10 @@ public class DingCallbackCrypto {
      *
      * @param token          钉钉开放平台上，开发者设置的token
      * @param encodingAesKey 钉钉开放台上，开发者设置的EncodingAESKey
-     * @param corpId         企业的corpid
+     * @param corpId         企业自建应用-事件订阅, 使用appKey
+     *                       企业自建应用-注册回调地址, 使用corpId
+     *                       第三方企业应用, 使用suiteKey
+     *
      * @throws DingTalkEncryptException 执行失败，请查看该异常的错误码和具体的错误信息
      */
     public DingCallbackCrypto(String token, String encodingAesKey, String corpId) throws DingTalkEncryptException {

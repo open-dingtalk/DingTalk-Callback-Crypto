@@ -16,6 +16,13 @@ import StringIO,base64, binascii, hashlib, string, struct
 from random import choice
 from Crypto.Cipher import AES
 
+"""
+@param token          钉钉开放平台上，开发者设置的token
+@param encodingAesKey 钉钉开放台上，开发者设置的EncodingAESKey
+@param corpId         企业自建应用-事件订阅, 使用appKey
+                      企业自建应用-注册回调地址, 使用corpId
+                      第三方企业应用, 使用suiteKey
+"""
 class DingCallbackCrypto2:
     def __init__(self, token,encodingAesKey, key):
         self.encodingAesKey = encodingAesKey

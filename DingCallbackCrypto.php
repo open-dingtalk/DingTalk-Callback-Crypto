@@ -5,6 +5,13 @@
  */
 class DingCallbackCrypto
 {
+    /**
+     * @param token          钉钉开放平台上，开发者设置的token
+     * @param encodingAesKey 钉钉开放台上，开发者设置的EncodingAESKey
+     * @param corpId         企业自建应用-事件订阅, 使用appKey
+     *                       企业自建应用-注册回调地址, 使用corpId
+     *                       第三方企业应用, 使用suiteKey
+     */
     private $m_token;
     private $m_encodingAesKey;
     private $m_corpId;
@@ -290,10 +297,10 @@ class Prpcrypt
 
 function test_demo(){
     $crypt = new DingCallbackCrypto("xxxx", "o1w0aum42yaptlz8alnhwikjd3jenzt9cb9wmzptgus", "suiteKeyxx");
-	$res = $crypt->getEncryptedMap("{\"xx\":11}");
+    $text = $crypt->getDecryptMsg($data->msg_signature, $data->timeStamp, $data->nonce, $data->encrypt);
+	$res = $crypt->getEncryptedMap("success");
 	var_dump($res);
     $data = json_decode($res);
-    $text = $crypt->getDecryptMsg($data->msg_signature, $data->timeStamp, $data->nonce, $data->encrypt);
     var_dump($text);
 }
 
