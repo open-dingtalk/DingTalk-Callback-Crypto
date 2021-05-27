@@ -3,10 +3,14 @@ package com.dingtalk.open;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
+import java.security.Permission;
+import java.security.PermissionCollection;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.security.Security;
+import java.lang.reflect.Field;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -342,5 +346,55 @@ public class DingCallbackCrypto {
             this.code = exceptionCode;
         }
     }
+    static {
+                try {
+                        Security.setProperty("crypto.policy", "limited");
+                        RemoveCryptographyRestrictions();
+                } catch (Exception var1) {
+                }
+
+        }
+        private static void RemoveCryptographyRestrictions() throws Exception {
+                Class<?> jceSecurity = getClazz("javax.crypto.JceSecurity");
+                Class<?> cryptoPermissions = getClazz("javax.crypto.CryptoPermissions");
+                Class<?> cryptoAllPermission = getClazz("javax.crypto.CryptoAllPermission");
+                if (jceSecurity != null) {
+                        setFinalStaticValue(jceSecurity, "isRestricted", false);
+                        PermissionCollection defaultPolicy = (PermissionCollection)getFieldValue(jceSecurity, "defaultPolicy", (Object)null, PermissionCollection.class);
+                        if (cryptoPermissions != null) {
+                                Map<?, ?> map = (Map)getFieldValue(cryptoPermissions, "perms", defaultPolicy, Map.class);
+                                map.clear();
+                        }
+
+                        if (cryptoAllPermission != null) {
+                                Permission permission = (Permission)getFieldValue(cryptoAllPermission, "INSTANCE", (Object)null, Permission.class);
+                                defaultPolicy.add(permission);
+                        }
+                }
+
+        }
+        private static Class<?> getClazz(String className) {
+                Class clazz = null;
+
+                try {
+                        clazz = Class.forName(className);
+                } catch (Exception var3) {
+                }
+
+                return clazz;
+        }
+        private static void setFinalStaticValue(Class<?> srcClazz, String fieldName, Object newValue) throws Exception {
+                Field field = srcClazz.getDeclaredField(fieldName);
+                field.setAccessible(true);
+                Field modifiersField = Field.class.getDeclaredField("modifiers");
+                modifiersField.setAccessible(true);
+                modifiersField.setInt(field, field.getModifiers() & -17);
+                field.set((Object)null, newValue);
+        }
+        private static <T> T getFieldValue(Class<?> srcClazz, String fieldName, Object owner, Class<T> dstClazz) throws Exception {
+                Field field = srcClazz.getDeclaredField(fieldName);
+                field.setAccessible(true);
+                return dstClazz.cast(field.get(owner));
+        }
 
 }
