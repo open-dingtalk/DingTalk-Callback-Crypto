@@ -295,13 +295,19 @@ class Prpcrypt
 }
 
 
+/**
+ * 以下为开发者需要自行构造的接口(也就是回调url)，接口内调用demo类中的解密和加密方法即可
+ */
+
 function test_demo(){
-    $crypt = new DingCallbackCrypto("xxxx", "o1w0aum42yaptlz8alnhwikjd3jenzt9cb9wmzptgus", "suiteKeyxx");
+	// 构造加解密方法
+    $crypt = new DingCallbackCrypto("token", "aes_key", "ownerKey");
+	// 解密方法； data为钉钉服务器请求开发者该接口时携带的参数(msg_signature,timeStamp和nonce在request中，encrypt在body中)
     $text = $crypt->getDecryptMsg($data->msg_signature, $data->timeStamp, $data->nonce, $data->encrypt);
-	$res = $crypt->getEncryptedMap("success");
-	var_dump($res);
-    $data = json_decode($res);
-    var_dump($text);
+	    var_dump($text);
+	// 加密返回；参数固定传success字符串，该方法得到的信息直接返回给钉钉服务器即可
+    $res = $crypt->getEncryptedMap("success");
+    var_dump($res);
 }
 
 test_demo();
