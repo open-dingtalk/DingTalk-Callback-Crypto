@@ -143,20 +143,14 @@ class DingCallbackCrypto3:
         return ''.join(choice(chars) for i in range(size))
 
 
-
+# 以下为开发者需要构造的接口(回调url)内的示例代码，调用demo提供的类中方法
 
 if __name__ == '__main__':
-    dingCrypto = DingCallbackCrypto3("xxxx", "o1w0aum42yaptlz8alnhwikjd3jenzt9cb9wmzptgus", "suiteKeyxx")
-    t = dingCrypto.getEncryptedMap("{xx:11}")
-    print(t)
-    print(t['encrypt'])
+    # 构造加解密方法
+    dingCrypto = DingCallbackCrypto3("token", "aes_key", "ownerkey")
+    # 调用解密方法，拿到推送的业务事件信息，这里的t为钉钉服务器请求该URL时携带的参数
     s = dingCrypto.getDecryptMsg(t['msg_signature'],t['timeStamp'],t['nonce'],t['encrypt'])
-    print("result:",s)
-
-    test = DingCallbackCrypto3("mryue", "Yue0EfdN5900c1ce5cf6A152c63DDe1808a60c5ecd7", "ding6ccabc44d2c8d38b");
-
-    res = test.getEncryptedMap('{"EventType":"check_url"}');
-    print(res);
-    text = test.getDecryptMsg("03044561471240d4a14bb09372dfcfd4fd0e40cb", "1608001896814", "WL4PK6yA",
-                              '0vJiX6vliEpwG3U45CtXqi+m8PXbQRARJ8p8BbDuD1EMTDf0jKpQ79QS93qEk7XHpP6u+oTTrd15NRPvNvmBKyDCYxxOK+HZeKju4yhELOFchzNukR+t8SB/qk4ROMu3');
-    print(text);
+    # 调用加密返回方法，参数固定传success字符串，该方法返回的信息，直接返回给钉钉服务器即可
+    t = dingCrypto.getEncryptedMap("success")
+    print(t)
+    
