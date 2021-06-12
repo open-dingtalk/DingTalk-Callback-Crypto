@@ -10,11 +10,11 @@ class DingCallbackCrypto
   attr_reader :token, :encoding_aes_key, :key
 
   # arguments
-  #   token:             钉钉开放平台上，开发者设置的token
-  #   encoding_aes_key:  钉钉开放台上，开发者设置的EncodingAESKey
-  #   key:               企业自建应用-事件订阅, 使用appKey
-  #                      企业自建应用-注册回调地址, 使用corpId
-  #                      第三方企业应用, 使用suiteKey
+  #   token:             钉钉开放平台上，开发者设置的 token
+  #   encoding_aes_key:  钉钉开放台上，开发者设置的 encodingAESKey
+  #   key:               企业自建应用-事件订阅, 使用 appKey
+  #                      企业自建应用-注册回调地址, 使用 corpId
+  #                      第三方企业应用, 使用 suiteKey
   def initialize(token, encoding_aes_key, key)
     @token = token
     @encoding_aes_key = encoding_aes_key
