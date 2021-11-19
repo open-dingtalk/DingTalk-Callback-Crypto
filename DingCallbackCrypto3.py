@@ -4,7 +4,7 @@
 #  code copy from https://github.com/shuizhengqi1/DingCrypto/blob/master/DingCrypto.py
 
 # 依赖Crypto类库
-# sudo pip3 install pycrypto  python3 安装Crypto
+# sudo pip3 install pycryptodome  python3 安装Crypto  (原pycrypto已经多年不维护，安装报错）
 # API说明
 # getEncryptedMap 生成回调处理成功后success加密后返回给钉钉的json数据
 # decrypt  用于从钉钉接收到回调请求后
