@@ -88,7 +88,7 @@ class DingCallbackCrypto3:
         contentEncode = self.pks7encode(content)
         iv = self.aesKey[:16]
         aesEncode = AES.new(self.aesKey, AES.MODE_CBC, iv)
-        aesEncrypt = aesEncode.encrypt(contentEncode)
+        aesEncrypt = aesEncode.encrypt(contentEncode.encode('UTF-8'))
         return base64.encodebytes(aesEncrypt).decode('UTF-8')
 
     ### 生成回调返回使用的签名值
