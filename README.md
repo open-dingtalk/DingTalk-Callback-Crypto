@@ -4,6 +4,9 @@
 
 温馨提示：该仓库中代码较早，而且早期事件订阅的数据安全方案设计上过于复杂，导致开发成本高，建议新的应用开发采用 DingTalk Stream Mode 代替 Webhook 方式，详见：https://open.dingtalk.com/document/orgapp/stream
 
+Stream Mode 交流群：
+![Stream Mode 交流群](https://camo.githubusercontent.com/039977cf655eeeb74711e08688c0c3b2c08ecf721ad0e136a854c963ee2fcf32/68747470733a2f2f67772e616c6963646e2e636f6d2f696d6765787472612f69312f4f31434e3031436c31306c77314f726657394c644967515f2121363030303030303030313735392d302d7470732d3538352d3736352e6a7067)
+
 ## API使用说明
 
 1. 实例化加解密类，入参是token, aesKey, ownerKey（企业回调是corpId, 三方应用回调是suiteKey)
