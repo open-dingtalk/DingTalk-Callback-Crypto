@@ -4,7 +4,7 @@
 #  code copy from https://github.com/shuizhengqi1/DingCrypto/blob/master/DingCrypto.py
 
 # 依赖Crypto类库
-# sudo pip3 install pycrypto  python3 安装Crypto
+# pip install pycryptodome #  python3 安装Crypto
 # API说明
 # getEncryptedMap 生成回调处理成功后success加密后返回给钉钉的json数据
 # decrypt  用于从钉钉接收到回调请求后
@@ -33,7 +33,7 @@ from Crypto.Cipher import AES
                       第三方企业应用, 使用suiteKey
 """
 class DingCallbackCrypto3:
-    def __init__(self, token,encodingAesKey, key):
+    def __init__(self, token, encodingAesKey, key):
         self.encodingAesKey = encodingAesKey
         self.key = key
         self.token = token
@@ -88,7 +88,7 @@ class DingCallbackCrypto3:
         contentEncode = self.pks7encode(content)
         iv = self.aesKey[:16]
         aesEncode = AES.new(self.aesKey, AES.MODE_CBC, iv)
-        aesEncrypt = aesEncode.encrypt(contentEncode)
+        aesEncrypt = aesEncode.encrypt(contentEncode.encode('UTF-8'))
         return base64.encodebytes(aesEncrypt).decode('UTF-8')
 
     ### 生成回调返回使用的签名值
@@ -146,17 +146,27 @@ class DingCallbackCrypto3:
 
 
 if __name__ == '__main__':
-    dingCrypto = DingCallbackCrypto3("xxxx", "o1w0aum42yaptlz8alnhwikjd3jenzt9cb9wmzptgus", "suiteKeyxx")
-    t = dingCrypto.getEncryptedMap("{xx:11}")
+    token = "xxxx"
+    aes_key = "o1w0aum42yaptlz8alnhwikjd3jenzt9cb9wmzptgus"
+    key = "suiteKeyxx"
+    dingCrypto = DingCallbackCrypto3(token, aes_key, key)
+    content = "{xx:11}"
+    t = dingCrypto.getEncryptedMap(content)
     print(t)
     print(t['encrypt'])
     s = dingCrypto.getDecryptMsg(t['msg_signature'],t['timeStamp'],t['nonce'],t['encrypt'])
-    print("result:",s)
+    print("result:", s)
 
     test = DingCallbackCrypto3("mryue", "Yue0EfdN5900c1ce5cf6A152c63DDe1808a60c5ecd7", "ding6ccabc44d2c8d38b");
 
-    res = test.getEncryptedMap('{"EventType":"check_url"}');
-    print(res);
+    expect = '{"EventType":"check_url"}'
+    res = test.getEncryptedMap(expect)
+    print(res)
     text = test.getDecryptMsg("03044561471240d4a14bb09372dfcfd4fd0e40cb", "1608001896814", "WL4PK6yA",
                               '0vJiX6vliEpwG3U45CtXqi+m8PXbQRARJ8p8BbDuD1EMTDf0jKpQ79QS93qEk7XHpP6u+oTTrd15NRPvNvmBKyDCYxxOK+HZeKju4yhELOFchzNukR+t8SB/qk4ROMu3');
-    print(text);
+    print(text)
+    if text == expect:
+        print("✅decrypt success")
+    else:
+        print("❌decrypt failure")
+
