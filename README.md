@@ -1,5 +1,8 @@
-# dingtalk-callback-Crypto
+# DingTalk-Callback-Crypto
+
 钉钉回调加解密类库和对应demo
+
+温馨提示：该仓库中代码较早，而且早期事件订阅的数据安全方案设计上过于复杂，导致开发成本高，建议新的应用开发采用 DingTalk Stream Mode 代替 Webhook 方式，详见：https://open.dingtalk.com/document/orgapp/stream
 
 ## API使用说明
 
@@ -74,3 +77,9 @@ String decryptMsg = callbackCrypto.getDecryptMsg(msg_signature, timeStamp, nonce
 ### Nodejs版本 参考[https://github.com/elixirChain/dingtalk-encrypt](https://github.com/elixirChain/dingtalk-encrypt)
 
 ### Rust版本 参考[https://github.com/shenshouer/dingtalk-rs](https://github.com/shenshouer/dingtalk-rs/blob/main/src/client/event_subscribe/callback_crypto.rs)
+
+## 其他版本
+
+目前还没验证，暂不合并，仅在此推荐：
+
+* Deno 版本：https://github.com/open-dingtalk/dingtalk-callback-Crypto/issues/30
