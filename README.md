@@ -76,8 +76,10 @@ String decryptMsg = callbackCrypto.getDecryptMsg(msg_signature, timeStamp, nonce
 
 ### Nodejs版本 参考[https://github.com/elixirChain/dingtalk-encrypt](https://github.com/elixirChain/dingtalk-encrypt)
 
+### Rust版本 参考[https://github.com/shenshouer/dingtalk-rs](https://github.com/shenshouer/dingtalk-rs/blob/main/src/client/event_subscribe/callback_crypto.rs)
+
 ## 其他版本
 
-暂无验证，不合并，仅在此推荐：
+目前还没验证，暂不合并，仅在此推荐：
 
 * Deno 版本：https://github.com/open-dingtalk/dingtalk-callback-Crypto/issues/30
